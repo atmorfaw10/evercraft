@@ -28,6 +28,13 @@ public class CharacterSheet {
         }
     }
 
+    public void takeDamage(int damage) {
+        setHitPoints(getHitPoints() - damage);
+    }
+
+    public boolean getIsAlive(){
+        return getHitPoints() > 0;
+    }
 
 
 

@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.swing.*;
+import java.util.concurrent.ExecutionException;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
@@ -138,6 +141,51 @@ class EvercraftApplicationTests {
 		// when the target character is hit is successful
 		// then the target character loses 1 hit point
 		Assertions.assertEquals(targetCharacter.getHitPoints()-1, attack.dealDamage(roll));
+	}
+
+	@Test
+	@DisplayName("Target character does not take damage when roll is not successful")
+	void no_damage_is_dealt_if_roll_is_not_successful() throws Exception {
+		// given a character's attack is on the target character
+		int roll = newCharacter.roll(5);
+		attack = new TargetAction(newCharacter, targetCharacter);
+		// when the target character is not hit
+		// then the target character should not lose any points
+		Assertions.assertEquals(targetCharacter.getHitPoints(), attack.dealDamage(roll));
+	}
+
+	@Test
+	@DisplayName("Should deal double damage when die roll is 20")
+	void double_damage_deal_when_die_roll_is_twenty() throws Exception
+	{
+		// given a character's attack is on the target character
+		int roll = newCharacter.roll(20);
+		attack = new TargetAction(newCharacter, targetCharacter);
+		int targetHitPointBeforeAttack = targetCharacter.getHitPoints();
+
+		// And the die roll is equal to 20
+		// when the target character is hit
+		int preRollDamage = attack.getDamage();
+		attack.dealDamage(roll);
+		int criticalDamage = attack.getDamage();
+		// then the damage dealt to target character is doubled
+		int targetHitPointsAfterAttack = targetHitPointBeforeAttack - criticalDamage;
+
+		Assertions.assertEquals(targetHitPointsAfterAttack, targetHitPointBeforeAttack - criticalDamage);
+		Assertions.assertEquals(criticalDamage, preRollDamage * 2);
+	}
+
+	@Test
+	@DisplayName("When the target character's hit points is  0, then the player dies")
+	void target_character_dies_when_hit_points_is_zero() throws Exception
+	{
+		// given a character
+
+		// when the character's hit point is zero
+		int health = targetCharacter.getHitPoints();
+		targetCharacter.takeDamage(health);
+		// then the character is dead
+		Assertions.assertFalse(targetCharacter.getIsAlive());
 	}
 
 }

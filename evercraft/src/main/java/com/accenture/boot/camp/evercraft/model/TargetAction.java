@@ -8,10 +8,12 @@ import lombok.Setter;
 public class TargetAction {
     protected CharacterSheet subject;
     protected CharacterSheet target;
+    protected int damage;
 
     public TargetAction(CharacterSheet subject, CharacterSheet target) {
         setSubject(subject);
         setTarget(target);
+        setDamage(1);
     }
 
     public boolean isSuccessful(int dieRoll) {
@@ -19,9 +21,14 @@ public class TargetAction {
     }
 
     public int dealDamage(int dieRoll) {
-        if(isSuccessful(dieRoll)) {
-            target.setHitPoints(target.getHitPoints() - 1);
+        if(dieRoll == 20) {
+            setDamage(this.damage * 2);
         }
+
+        if(isSuccessful(dieRoll)) {
+            target.takeDamage(getDamage());
+        }
+
         return target.getHitPoints();
     }
 }
