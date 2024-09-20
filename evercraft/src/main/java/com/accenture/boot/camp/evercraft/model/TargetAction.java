@@ -14,7 +14,14 @@ public class TargetAction {
         setTarget(target);
     }
 
-    public boolean isSuccessfulRoll(int dieRoll) {
+    public boolean isSuccessful(int dieRoll) {
        return getSubject().roll(dieRoll) >= getTarget().getArmorClass();
+    }
+
+    public int dealDamage(int dieRoll) {
+        if(isSuccessful(dieRoll)) {
+            target.setHitPoints(target.getHitPoints() - 1);
+        }
+        return target.getHitPoints();
     }
 }
